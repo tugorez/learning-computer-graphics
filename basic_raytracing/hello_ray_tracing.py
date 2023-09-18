@@ -1,6 +1,15 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
+import random
+
+
+def random_color():
+    red = random.randint(0, 255)
+    green = random.randint(0, 255)
+    blue = random.randint(0, 255)
+    color = (red, green, blue)
+    return color
 
 VIEWPORT_DISTANCE = 1
 
@@ -10,8 +19,14 @@ CANVAS = (VIEWPORT[0] + 1, VIEWPORT[1] + 1)
 
 # Just dots atm
 SCENE = [
-    [-i, 0, 1] for i in range(32)
-]
+    [[i, -i, 1], random_color()] for i in range(-32, 33)
+] + [
+    [[i, i, 1], random_color()] for i in range(-32, 33)
+] + [
+    [[0, i, 1], random_color()] for i in range(-32, 33)
+] + [
+    [[i, 0, 1], random_color()] for i in range(-32, 33)
+] 
 
 def magnitude(v):
     return math.sqrt(sum([vi * vi for vi in v]))
@@ -40,8 +55,10 @@ def get_color(canvas):
     v = (vx, vy, vz)
 
     for dot in SCENE:
-        if same_direction(dot, v):
-            return (0, 255, 0)
+        dot_coord = dot[0]
+        dot_color = dot[1]
+        if same_direction(dot_coord, v):
+            return dot_color
     return (0, 0, 0)
 
 if __name__ == '__main__':
@@ -50,5 +67,5 @@ if __name__ == '__main__':
         for j in range(CANVAS[1]):
             color = get_color((i, j))
             canvas[i][j] = color
-    plt.imshow(canvas, vmin = 0, vmax = 255, interpolation = None)
+    plt.imshow(canvas.astype("uint8"), vmin = 0, vmax = 255, interpolation = 'None')
     plt.show()
